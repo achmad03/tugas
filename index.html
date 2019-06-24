@@ -1,18 +1,156 @@
+<!--
+Copyright 2018 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>News App</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
-    <header>
-        <h1>News App</h1>
+  <head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta charset="utf-8">
+    <title>News Website</title>
+    <!--<link rel="stylesheet" href="styles/main.css">-->
+  </head>
+  <body>
+
+    <header style="background-color: green;color:white;padding:1% 1%;">
+      <h1>News App</h1>
+          Batas Yang Ditampilkan : 10
+          <button id="btn1" type="button">1</button>
+          <button id="btn2" type="button">2</button>
+          <button id="btn3" type="button">3</button>
+          <button id="btn4" type="button">4</button>
+          <button id="btn5" type="button">5</button>
     </header>
-    <main></main>
-    <script src="app.js" type="text/javascript"></script>
-</body>
+
+    <main>
+      
+      
+
+      <section class="img-container" id="img-container">
+        <!-- image licensed CC0 - no attribution required https://unsplash.com/photos/Pzu9f6Nby5w -->
+        <!-- image added dynamically -->
+      </section>
+
+      <ol>
+      <div id="data-container1" style="text-align: left;">
+      </div>
+      </ol>
+
+      <section class="text-container">
+        <p id="message">
+          <!-- sample text from https://en.wikipedia.org/wiki/Fetch_(game) -->
+          <!-- message added dynamically -->
+        </p>
+      </section>
+
+    </main>
+
+    <script>
+      var awal=0;
+      var akhir=10;
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw-ach.js')
+            .then(swReg => {
+              console.log('Service Worker is registered', swReg);
+            })
+            .then(fetchJSON(1))
+            .catch(err => {
+              console.error('Service Worker Error', err);
+            });
+          });
+        }
+
+        function fetchJSON(byk) {
+          // TODO
+          //digunakan untuk menguji apakah browser support dengan fetch atau tidak
+          if (!('fetch' in window)) {
+            //menampilkan error bila kondisi terpenuhi
+            console.log('Fetch API not found, try including the polyfill');
+            return;
+          }
+
+          //untuk mengambil data json dari source internet
+          fetch('https://jsonplaceholder.typicode.com/posts') // 1
+          //melakukan validasi fetch
+            //.then(validateResponse) // 2
+            //melakukan decode hasil yang difetch dari file json
+            .then(readResponseAsJSON) // 3
+            //menampilkan data dalan tag <ul> tepatnya pada div
+            //.then(batasi(byk))
+            .then(tampilData); // 4
+            //menampilkan error bila ada masalah
+            //.catch(logError);
+        }
+
+        function batasi(byk){
+          if(byk===2){
+            awal=10;
+            akhir=20;
+            console.log("2");
+          }
+          else if(byk===3){
+            awal=20;
+            akhir=30;
+          }
+          else if(byk===4){
+            awal=30;
+            akhir=40;
+          }
+          else if(byk===5){
+            awal=40;
+            akhir=50;
+          }
+          else{
+            awal=0;
+            akhir=10;
+          }
+        }
+
+        function readResponseAsJSON(response) {
+          return response.json();
+        }
+        const btn1 = document.getElementById('btn1');
+        btn1.addEventListener('click', batasi(1));
+        const btn2 = document.getElementById('btn2');
+        btn2.addEventListener('click', batasi(2));
+        const btn3 = document.getElementById('btn3');
+        btn3.addEventListener('click', fetchJSON(3));
+        const btn4 = document.getElementById('btn4');
+        btn4.addEventListener('click', fetchJSON(4));
+        const btn5 = document.getElementById('btn5');
+        btn5.addEventListener('click', fetchJSON(5));
+
+        function tampilData(result){
+          //console.log(result.length);
+          //mengambil panjang json data
+          jmlData=result.length;
+          dum1="<li>";
+          dum2="</li>";
+          text1="";
+          //document.write("<?php $bts=10; if(isset($_GET['jml'])){"+jmlData+"=$_GET['jml'];}else{"+jmlData+"=10;} ?>");
+          for(a=awal;a<akhir;a++){
+            //genarate list
+            text1=text1+dum1+"<strong>"+result[a]["title"]+"</strong> <br/> "+result[a]["body"]+dum2+"<hr/>";
+            //console.log(dum1+result[a]["name"]+dum2);
+            //console.log(dum1+result[a]["email"]+dum2);
+          }
+          //console.log(text1);
+          document.getElementById("data-container1").innerHTML=text1;
+        }
+      </script>
+
+    <!--<script src="js/main.js"></script>-->
+  </body>
 </html>
